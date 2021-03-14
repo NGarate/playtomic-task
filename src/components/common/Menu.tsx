@@ -80,7 +80,7 @@ export default function Menu({
     const auth0 = useAuth0();
     const dispatch = useDispatch();
     const location = useLocation();
-    const { picture, user } = useSelector((state: RootState) => state.login);
+    const { user } = useSelector((state: RootState) => state.login);
 
     function handleLogout(): void {
         dispatch(logoutWithAuth0(auth0));
@@ -153,7 +153,7 @@ export default function Menu({
                         <Avatar
                             className={classes.avatar}
                             alt={user.userName}
-                            src={picture}
+                            src={user.picture}
                         />
                     </Tooltip>
                 </Toolbar>

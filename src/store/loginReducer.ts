@@ -77,6 +77,7 @@ const loginSlice: Slice = createSlice({
         user: null,
         token: null
     } as LoginState,
+    reducers: {},
     extraReducers: {
         'login/loginWithAuth0/pending': (state) => ({
             ...state,
