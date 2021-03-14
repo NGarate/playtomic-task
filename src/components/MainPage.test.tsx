@@ -1,21 +1,25 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import renderer from 'react-test-renderer';
 import MainPage from './MainPage';
+import * as redux from 'react-redux';
 
-test('It render menu links', () => {
-    render(<MainPage />);
+jest.mock('react-redux');
 
-    const dashboardLink = screen.getByText(/Dashboard/i);
-    const settingsLink = screen.getByText(/Settings/i);
+describe('Main page', () => {
+    const mockedDispatch = jest.fn();
+    const basicState = {
+        login: {},
+        dashboard: {},
+        settings: {}
+    };
 
-    expect(dashboardLink).toBeInTheDocument();
-    expect(settingsLink).toBeInTheDocument();
-});
+    beforeEach(() => {
+        redux.useDispatch.mockImplementation(() => mockedDispatch);
+        redux.useSelector.mockReturnValue(basicState);
+    });
 
-test('It renders the toolbar', () => {
-    render(<MainPage />);
-
-    const toolbar = screen.getByText(/Playtomic task/i);
-
-    expect(toolbar).toBeInTheDocument();
+    test('renders correctly', () => {
+        const tree = renderer.create(<MainPage />).toJSON();
+        expect(tree).toMatchSnapshot();
+    });
 });
