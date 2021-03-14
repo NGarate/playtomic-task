@@ -1,42 +1,42 @@
 import { createSlice, createAsyncThunk, Slice } from '@reduxjs/toolkit';
 import { Auth0ContextInterface } from '@auth0/auth0-react';
 
-interface loginState {
+export type LoginState = {
     isLoading: boolean;
     error: string | null;
-    user?: {
+    user: {
         userName?: string;
         email?: string;
         picture?: string;
-    };
+    } | null;
     isAuthenticated: boolean;
     accessToken?: string;
-}
+};
 
 const loginWithAuth0 = createAsyncThunk(
     'login/loginWithAuth0',
     async (auth0: Auth0ContextInterface, { dispatch }) => {
-        try {
-            dispatch(login(''));
+        dispatch(login(''));
 
-            await auth0.loginWithPopup();
+        await auth0.loginWithPopup();
 
-            return auth0;
-        } catch (error) {
-            dispatch(loginFail(error.message));
-        }
+        return { user: auth0.user, isAuthenticated: auth0.isAuthenticated };
     }
 );
 
 const logoutWithAuth0 = createAsyncThunk(
-    'logout/logoutWithAuth0',
+    'login/logoutWithAuth0',
     async (auth0: Auth0ContextInterface, { dispatch }) => {
-        try {
-            dispatch(logout(''));
+        dispatch(logout(''));
 
-            await auth0.logout({ returnTo: window.location.origin });
+        try {
+            auth0.logout({
+                returnTo: window.location.origin
+            });
+
+            return Promise.resolve();
         } catch (error) {
-            dispatch(logoutFail(error.message));
+            return Promise.reject(error);
         }
     }
 );
@@ -47,9 +47,16 @@ function getUserInfo({ user, isAuthenticated }: Auth0ContextInterface) {
     const { email, nickname, name, given_name, family_name, picture } = user;
     const fullName =
         given_name && family_name ? `${given_name} ${family_name}` : '';
-    const userName = nickname || name || fullName;
+    const userName = nickname || name || fullName || email;
 
-    return { user: { email, userName, picture }, isAuthenticated };
+    return {
+        user: {
+            email: email ? email : '',
+            userName: userName ? userName : '',
+            picture: picture ? picture : ''
+        },
+        isAuthenticated
+    };
 }
 
 const loginSlice: Slice = createSlice({
@@ -57,8 +64,9 @@ const loginSlice: Slice = createSlice({
     initialState: {
         isLoading: false,
         error: null,
-        isAuthenticated: false
-    } as loginState,
+        isAuthenticated: false,
+        user: null
+    } as LoginState,
     reducers: {
         login: (state) => ({
             ...state,
@@ -67,19 +75,7 @@ const loginSlice: Slice = createSlice({
             user: null,
             isAuthenticated: false
         }),
-        loginFail: (state, { payload }) => ({
-            ...state,
-            isLoading: false,
-            error: payload,
-            user: null,
-            isAuthenticated: false
-        }),
-        logout: (state) => ({ ...state, isLoading: true, error: null }),
-        logoutFail: (state, { payload }) => ({
-            ...state,
-            isLoading: false,
-            error: payload
-        })
+        logout: (state) => ({ ...state, isLoading: true, error: null })
     },
     extraReducers: {
         'login/loginWithAuth0/fulfilled': (state, { payload }) => ({
@@ -88,16 +84,29 @@ const loginSlice: Slice = createSlice({
             error: null,
             ...getUserInfo(payload)
         }),
+        'login/loginWithAuth0/rejected': (state, { error }) => ({
+            ...state,
+            isLoading: false,
+            error: error.message,
+            user: null,
+            isAuthenticated: false
+        }),
         'login/logoutWithAuth0/fulfilled': (state) => ({
             ...state,
             isLoading: false,
             error: null,
-            isAuthenticated: false
+            isAuthenticated: false,
+            user: null
+        }),
+        'login/logoutWithAuth0/rejected': (state, { error }) => ({
+            ...state,
+            isLoading: false,
+            error: error.message
         })
     }
 });
 
-const { login, loginFail, logout, logoutFail } = loginSlice.actions;
+const { login, logout } = loginSlice.actions;
 
-export { login, loginFail, loginWithAuth0, logoutWithAuth0 };
+export { login, logout, loginWithAuth0, logoutWithAuth0 };
 export default loginSlice.reducer;
