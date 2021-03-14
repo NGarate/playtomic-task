@@ -3,7 +3,7 @@ import store from './index';
 import { Auth0ContextInterface } from '@auth0/auth0-react';
 
 describe('Login Reducer', () => {
-    test('Should hºve the right initial state', () => {
+    test('Should have the right initial state', () => {
         const initialState: LoginState = store.getState().login;
         const expectedState: LoginState = {
             isLoading: false,
@@ -40,7 +40,7 @@ describe('Login Reducer', () => {
             picture: 'picture'
         };
         const defaultMockedAuth0: Auth0ContextInterface = {
-            loginWithPopup: () => Promise.resolve(),
+            loginWithRedirect: () => Promise.resolve(),
             user: defaultMockUser,
             isAuthenticated: true
         };
@@ -211,11 +211,11 @@ describe('Login Reducer', () => {
             expect(store.getState().login).toEqual(expectedState);
         });
 
-        test('the loginWithPopup is rejected', async () => {
+        test('the loginWithRedirect is rejected', async () => {
             const error = new Error('An error');
             const mockedAuth0: Auth0ContextInterface = {
                 ...defaultMockedAuth0,
-                loginWithPopup: () => Promise.reject(error)
+                loginWithRedirect: () => Promise.reject(error)
             };
             const expectedState: LoginState = {
                 ...defaultExpectedState,
@@ -250,7 +250,7 @@ describe('Login Reducer', () => {
             isAuthenticated: true
         };
         const defaultMockedAuth0: Auth0ContextInterface = {
-            loginWithPopup: () => Promise.resolve(),
+            loginWithRedirect: () => Promise.resolve(),
             user: defaultMockUser,
             isAuthenticated: true
         };
@@ -287,7 +287,7 @@ describe('Login Reducer', () => {
             logout: () => {
                 //empty function
             },
-            loginWithPopup: () => Promise.resolve(),
+            loginWithRedirect: () => Promise.resolve(),
             user: defaultMockUser,
             isAuthenticated: true
         };

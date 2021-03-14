@@ -18,7 +18,7 @@ const loginWithAuth0 = createAsyncThunk(
     async (auth0: Auth0ContextInterface, { dispatch }) => {
         dispatch(login(''));
 
-        await auth0.loginWithPopup();
+        await auth0.loginWithRedirect();
 
         return { user: auth0.user, isAuthenticated: auth0.isAuthenticated };
     }
