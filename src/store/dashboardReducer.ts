@@ -1,20 +1,34 @@
 import { createSlice, createAsyncThunk, Slice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export type Todos = {
-    userId: number;
+export type User = {
     id: number;
-    title: string;
-    completed: boolean;
+    name: string;
+    username: string;
+    email: string;
+    address: {
+        street: string;
+        suite: string;
+        city: string;
+        zipcode: string;
+    };
+    geo: { lat: string; lng: string };
+    phone: string;
+    website: string;
+    company: { name: string; catchPhrase: string; bs: string };
 };
 
 export type DashboardState = {
     isLoading: boolean;
     error: string | null;
-    todos: Todos[];
+    user: User | Record<string, unknown>;
 };
 
-const TODOS_PATH = 'https://jsonplaceholder.typicode.com/users/1/todos';
+function getRandomUserPath(): string {
+    const BASE_PATH = 'https://jsonplaceholder.typicode.com/users/';
+    const randomId: number = Math.floor(Math.random() * 10) + 1;
+    return BASE_PATH + randomId;
+}
 
 const getDashboardData = createAsyncThunk(
     'dashboard/getDashboardData',
@@ -22,7 +36,7 @@ const getDashboardData = createAsyncThunk(
         if (!arg.isAuthenticated)
             return Promise.reject(new Error('User not logged'));
 
-        return axios.get(TODOS_PATH, {
+        return axios.get(getRandomUserPath(), {
             headers: {
                 Authorization: `Bearer ${arg.token}`
             }
@@ -35,7 +49,7 @@ const dashboardSlice: Slice = createSlice({
     initialState: {
         isLoading: false,
         error: null,
-        todos: []
+        user: {}
     } as DashboardState,
     reducers: {},
     extraReducers: {
@@ -47,13 +61,13 @@ const dashboardSlice: Slice = createSlice({
             ...state,
             isLoading: false,
             error: null,
-            todos: payload.data
+            user: payload.data
         }),
         'dashboard/getDashboardData/rejected': (state, { error }) => ({
             ...state,
             isLoading: false,
             error: error.message,
-            todos: []
+            user: {}
         })
     }
 });
