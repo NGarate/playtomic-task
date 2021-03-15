@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Main page renders correctly when user is authenticated 1`] = `
+<BrowserRouter>
+  <Switch>
+    <Route
+      component={[Function]}
+      path="/login"
+    />
+    <ProtectedRoute
+      component={[Function]}
+      exact={true}
+      path="/"
+    />
+    <ProtectedRoute
+      component={[Function]}
+      path="/settings"
+    />
+    <Redirect
+      to="/login"
+    />
+  </Switch>
+</BrowserRouter>
+`;
+
+exports[`Main page renders correctly when user is not authenticated 1`] = `
+<BrowserRouter>
+  <Switch>
+    <Route
+      component={[Function]}
+      path="/login"
+    />
+    <ProtectedRoute
+      component={[Function]}
+      exact={true}
+      path="/"
+    />
+    <ProtectedRoute
+      component={[Function]}
+      path="/settings"
+    />
+    <Redirect
+      to="/login"
+    />
+  </Switch>
+</BrowserRouter>
+`;
