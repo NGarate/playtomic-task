@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
@@ -86,7 +86,7 @@ export default function Menu({
         dispatch(logoutWithAuth0(auth0));
     }
 
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     function handleDrawerToggle(): void {
         setMobileOpen(!mobileOpen);
