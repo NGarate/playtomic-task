@@ -44,7 +44,7 @@ describe('Settings Reducer', () => {
                 error: null,
                 photos
             };
-            axios.get.mockResolvedValue(photos);
+            axios.get.mockResolvedValue({ data: photos });
 
             await store.dispatch(getSettingsData(defaultParams));
 

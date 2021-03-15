@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, Slice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export type Photos = {
+export type Photo = {
     albumId: number;
     id: number;
     title: string;
@@ -12,20 +12,20 @@ export type Photos = {
 export type SettingsState = {
     isLoading: boolean;
     error: string | null;
-    photos: Photos[];
+    photos: Photo[];
 };
 
 const PHOTOS_PATH = 'https://jsonplaceholder.typicode.com/albums/1/photos';
 
 const getSettingsData = createAsyncThunk(
     'settings/getSettingsData',
-    ({ token, isAuthenticated }) => {
-        if (!isAuthenticated)
+    (arg: { token: string; isAuthenticated: boolean }) => {
+        if (!arg.isAuthenticated)
             return Promise.reject(new Error('User not logged'));
 
         return axios.get(PHOTOS_PATH, {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${arg.token}`
             }
         });
     }
@@ -48,7 +48,7 @@ const settingsSlice: Slice = createSlice({
             ...state,
             isLoading: false,
             error: null,
-            photos: payload
+            photos: payload.data
         }),
         'settings/getSettingsData/rejected': (state, { error }) => ({
             ...state,

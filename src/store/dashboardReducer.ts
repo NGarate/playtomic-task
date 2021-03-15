@@ -18,13 +18,13 @@ const TODOS_PATH = 'https://jsonplaceholder.typicode.com/users/1/todos';
 
 const getDashboardData = createAsyncThunk(
     'dashboard/getDashboardData',
-    ({ token, isAuthenticated }) => {
-        if (!isAuthenticated)
+    (arg: { token: string; isAuthenticated: boolean }) => {
+        if (!arg.isAuthenticated)
             return Promise.reject(new Error('User not logged'));
 
         return axios.get(TODOS_PATH, {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${arg.token}`
             }
         });
     }
@@ -47,7 +47,7 @@ const dashboardSlice: Slice = createSlice({
             ...state,
             isLoading: false,
             error: null,
-            todos: payload
+            todos: payload.data
         }),
         'dashboard/getDashboardData/rejected': (state, { error }) => ({
             ...state,

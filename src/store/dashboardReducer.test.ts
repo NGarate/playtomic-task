@@ -41,7 +41,7 @@ describe('Dashboard Reducer', () => {
                 error: null,
                 todos
             };
-            axios.get.mockResolvedValue(todos);
+            axios.get.mockResolvedValue({ data: todos });
 
             await store.dispatch(getDashboardData(defaultParams));
 
